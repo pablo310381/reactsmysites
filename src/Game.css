@@ -1,0 +1,503 @@
+/* Game.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+  font-family: 'Courier New', 'Consolas', monospace;
+}
+
+body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+.game-container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #000;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Canvas стили */
+canvas {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* HUD */
+#hud {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: #00ff00;
+  background: rgba(0, 10, 0, 0.9);
+  padding: 20px;
+  border: 2px solid #00ff00;
+  z-index: 10;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2), inset 0 0 20px rgba(0, 255, 0, 0.05);
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 16px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  min-width: 220px;
+  letter-spacing: 1px;
+}
+
+.hud-item {
+  padding: 5px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hud-value {
+  font-weight: bold;
+  font-size: 18px;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.status-active {
+  font-weight: bold;
+  text-shadow: 0 0 10px #00ff00;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Миникарта */
+#minimap-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 220px;
+  height: 220px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid #00ff00;
+  z-index: 10;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#minimap {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  gap: 0px;
+}
+
+.cell {
+  background: rgba(0, 20, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.cell.wall {
+  background: rgba(0, 80, 0, 0.8);
+  box-shadow: inset 0 0 2px rgba(0, 255, 0, 0.2);
+}
+
+.cell.player {
+  background: #00ff00;
+  box-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.5);
+  border-radius: 3px;
+  animation: playerPulse 1.5s infinite;
+  z-index: 2;
+}
+
+@keyframes playerPulse {
+  0%, 100% { box-shadow: 0 0 8px #00ff00, 0 0 15px rgba(0, 255, 0, 0.3); }
+  50% { box-shadow: 0 0 15px #00ff00, 0 0 25px rgba(0, 255, 0, 0.6); }
+}
+
+.cell.key {
+  background: #ffd700;
+  box-shadow: 0 0 8px #ffd700, 0 0 15px rgba(255, 215, 0, 0.4);
+  border-radius: 50%;
+  animation: keyPulse 2s infinite;
+  z-index: 1;
+}
+
+@keyframes keyPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.7); opacity: 0.7; }
+}
+
+.cell.monster {
+  background: #ff0000;
+  box-shadow: 0 0 10px #ff0000, 0 0 20px rgba(255, 0, 0, 0.5);
+  border-radius: 3px;
+  animation: monsterPulse 0.8s infinite;
+  z-index: 3;
+}
+
+@keyframes monsterPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Начальный экран */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.95);
+  color: #00ff00;
+  z-index: 100;
+  text-align: center;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#overlay h1 {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  font-family: 'Courier New', 'Consolas', monospace;
+  text-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+  animation: titleGlow 2s infinite;
+  letter-spacing: 4px;
+}
+
+@keyframes titleGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
+  50% { text-shadow: 0 0 40px rgba(0, 255, 0, 0.8), 0 0 80px rgba(0, 255, 0, 0.4); }
+}
+
+#overlay p {
+  font-size: 1.3rem;
+  font-family: 'Courier New', 'Consolas', monospace;
+  line-height: 2;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.click-hint {
+  font-size: 1rem !important;
+  opacity: 0.6 !important;
+  animation: blink 1.5s infinite;
+  margin-top: 2rem !important;
+}
+
+/* Кастомный Alert */
+#custom-alert {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 380px;
+  max-width: 90vw;
+  padding: 35px 40px;
+  background: rgba(0, 5, 0, 0.98);
+  border: 3px solid #00ff00;
+  color: #00ff00;
+  text-align: center;
+  z-index: 200;
+  box-shadow: 0 0 50px rgba(0, 255, 0, 0.3), inset 0 0 30px rgba(0, 255, 0, 0.1);
+  font-family: 'Courier New', 'Consolas', monospace;
+  border-radius: 15px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: alertAppear 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes alertAppear {
+  from {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+#custom-alert h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  color: #00ff00;
+}
+
+#custom-alert p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  opacity: 0.9;
+}
+
+.btn {
+  margin-top: 20px;
+  padding: 14px 40px;
+  background: #00ff00;
+  color: #000;
+  border: none;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 8px;
+  outline: none;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.btn:hover {
+  background: #00cc00;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.6), 0 0 60px rgba(0, 255, 0, 0.3);
+  transform: translateY(-3px);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+/* ---------- Сенсорное управление (работает и по клику мышью на ПК) ---------- */
+
+#touch-controls {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 16px;
+  pointer-events: none; /* контейнер прозрачен для кликов, кроме самих кнопок */
+}
+
+.touch-btn {
+  pointer-events: auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #00ff00;
+  background: rgba(0, 20, 0, 0.7);
+  color: #00ff00;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.25), inset 0 0 10px rgba(0, 255, 0, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.touch-btn:active,
+.touch-btn.is-pressed {
+  background: rgba(0, 255, 0, 0.25);
+  transform: scale(0.92);
+  box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
+}
+
+.touch-btn--forward {
+  width: 74px;
+  height: 74px;
+  font-size: 1.9rem;
+  order: 2;
+}
+
+.touch-btn--left {
+  order: 1;
+}
+
+.touch-btn--right {
+  order: 3;
+}
+
+/* Адаптивный дизайн */
+@media (max-width: 768px) {
+  #hud {
+    font-size: 14px;
+    padding: 15px;
+    top: 10px;
+    left: 10px;
+    min-width: 180px;
+  }
+  
+  .hud-value {
+    font-size: 16px;
+  }
+  
+  #minimap-container {
+    width: 180px;
+    height: 180px;
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  #overlay h1 {
+    font-size: 3rem;
+  }
+  
+  #overlay p {
+    font-size: 1.1rem;
+  }
+  
+  #custom-alert {
+    min-width: 300px;
+    padding: 25px 30px;
+  }
+  
+  #custom-alert h2 {
+    font-size: 1.3rem;
+  }
+  
+  .btn {
+    padding: 12px 35px;
+    font-size: 1rem;
+  }
+
+  #minimap-container {
+    bottom: 130px;
+  }
+
+  #touch-controls {
+    bottom: 16px;
+    gap: 12px;
+  }
+
+  .touch-btn {
+    width: 58px;
+    height: 58px;
+    font-size: 1.4rem;
+  }
+
+  .touch-btn--forward {
+    width: 68px;
+    height: 68px;
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #hud {
+    font-size: 12px;
+    padding: 10px 12px;
+    min-width: 150px;
+    top: 5px;
+    left: 5px;
+  }
+  
+  .hud-value {
+    font-size: 14px;
+  }
+  
+  #minimap-container {
+    width: 150px;
+    height: 150px;
+    bottom: 130px;
+    right: 5px;
+  }
+  
+  #overlay h1 {
+    font-size: 2.2rem;
+  }
+  
+  #overlay p {
+    font-size: 0.9rem;
+  }
+  
+  #custom-alert {
+    min-width: 250px;
+    padding: 20px;
+  }
+  
+  #custom-alert h2 {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+  
+  #custom-alert p {
+    font-size: 0.9rem;
+  }
+  
+  .btn {
+    padding: 10px 30px;
+    font-size: 0.9rem;
+  }
+
+  #touch-controls {
+    bottom: 12px;
+    gap: 10px;
+  }
+
+  .touch-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 1.25rem;
+  }
+
+  .touch-btn--forward {
+    width: 62px;
+    height: 62px;
+    font-size: 1.5rem;
+  }
+}
+
+/* На устройствах без тача (мышь/трекпад) кнопки чуть прозрачнее, чтобы не мешали обзору */
+@media (hover: hover) and (pointer: fine) {
+  .touch-btn {
+    opacity: 0.75;
+  }
+
+  .touch-btn:hover {
+    opacity: 1;
+  }
+}
