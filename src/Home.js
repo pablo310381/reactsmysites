@@ -1,6 +1,6 @@
-// Home.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FaGamepad, FaTelegramPlane } from 'react-icons/fa';
 import './Home.css';
 
 const TEXT = {
@@ -9,14 +9,12 @@ const TEXT = {
     subtitle: 'Добро пожаловать на мой сайт',
     play: 'Играть в Лабиринт',
     telegram: 'Мой Telegram',
-    bot: 'Askify Bot',
   },
   en: {
     status: 'System // Online',
     subtitle: 'Welcome to my website',
     play: 'Play Maze',
     telegram: 'My Telegram',
-    bot: 'Askify Bot',
   },
 };
 
@@ -78,7 +76,7 @@ const Home = () => {
           React.createElement(
             Link,
             { to: '/game', className: 'primary-btn' },
-            React.createElement('span', { style: { fontSize: '20px' } }, '🎮'),
+            React.createElement(FaGamepad, { size: 20 }),
             React.createElement('span', null, t.play)
           ),
           React.createElement(
@@ -89,19 +87,8 @@ const Home = () => {
               rel: 'noopener noreferrer',
               className: 'telegram-btn',
             },
-            React.createElement('span', { style: { fontSize: '20px' } }, '✈️'),
+            React.createElement(FaTelegramPlane, { size: 20 }),
             React.createElement('span', null, t.telegram)
-          ),
-          React.createElement(
-            'a',
-            {
-              href: 'http://t.me/askifybot?start=hf36d',
-              target: '_blank',
-              rel: 'noopener noreferrer',
-              className: 'bot-btn',
-            },
-            React.createElement('span', { style: { fontSize: '20px' } }, '🤖'),
-            React.createElement('span', null, t.bot)
           )
         )
       )

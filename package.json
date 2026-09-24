@@ -1,5 +1,5 @@
 {
-  "homepage": "https://pablo310381.github.io/reactsmysite",
+  "homepage": "https://pablo310381.github.io/reactsmysites",
   "name": "react-project",
   "private": true,
   "version": "0.0.0",
@@ -9,12 +9,13 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy":"npm run build",
-    "deploy":"gh-pages -d dist"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0",
     "react-router-dom": "^7.18.2",
     "three": "^0.160.0"
   },

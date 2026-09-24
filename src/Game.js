@@ -1,18 +1,7 @@
-// Game.js
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import './Game.css';
 
-// ВАЖНО: карта и размер стены вынесены ЗА ПРЕДЕЛЫ компонента.
-// Раньше `map` создавался заново на каждый рендер компонента, из-за чего
-// все useCallback (updateMonster/drawMap/movePlayer), зависящие от `map`,
-// тоже пересоздавались каждый рендер. А главный useEffect (инициализация
-// сцены Three.js) зависел от этих колбэков — поэтому ЛЮБОЕ изменение
-// состояния (взял ключ, задело монстром, дошёл до выхода) вызывало
-// setState -> ре-рендер -> новая ссылка на map -> пересборка всей сцены
-// с нуля (игрок телепортируется в начало, ключи возвращаются на место,
-// HP сбрасывается на 100). Вынос map/wallSize наружу делает их ссылку
-// стабильной, и сцена больше не пересоздаётся зря.
 const map = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   [1,0,0,0,1,0,0,0,0,0,0,0,2,0,1],
@@ -100,7 +89,6 @@ const Game = () => {
     let nextZ = monsterDataRef.current.gridZ;
     let moved = false;
 
-    // Преследование игрока
     if (monsterDataRef.current.gridX !== pGX) {
       let stepX = monsterDataRef.current.gridX < pGX ? 1 : -1;
       let checkX = monsterDataRef.current.gridX + stepX;
@@ -121,7 +109,6 @@ const Game = () => {
       }
     }
 
-    // Случайное движение
     if (!moved) {
       const dirs = [[1,0], [-1,0], [0,1], [0,-1]];
       const shuffled = [...dirs].sort(() => Math.random() - 0.5);
@@ -143,7 +130,6 @@ const Game = () => {
     monsterRef.current.position.x = monsterDataRef.current.gridX * wallSize;
     monsterRef.current.position.z = monsterDataRef.current.gridZ * wallSize;
 
-    // Проверка столкновения с игроком
     if (monsterDataRef.current.gridX === pGX && monsterDataRef.current.gridZ === pGZ) {
       const newHp = hpRef.current - 25;
       updateHP(newHp);
@@ -194,7 +180,6 @@ const Game = () => {
         camera.position.z = nz;
         playerPosRef.current = { x: gx, z: gz };
 
-        // Сбор ключей
         const keyIndex = keys3DRef.current.findIndex(k => k.userData.gx === gx && k.userData.gz === gz);
         if (keyIndex !== -1) {
           const keyMesh = keys3DRef.current[keyIndex];
@@ -206,7 +191,6 @@ const Game = () => {
           setCollectedKeys(collectedKeysRef.current);
         }
 
-        // Проверка выхода
         if (map[gz][gx] === 4) {
           if (collectedKeysRef.current >= 4) {
             showAlertMessage("Доступ разрешен. Вы покинули зону.", "MISSION COMPLETE", true);
@@ -240,7 +224,6 @@ const Game = () => {
       rendererRef.current.domElement.parentNode.removeChild(rendererRef.current.domElement);
     }
 
-    // Сброс всех состояний
     keys3DRef.current = [];
     collectedKeysRef.current = 0;
     hpRef.current = 100;
@@ -254,7 +237,6 @@ const Game = () => {
     setIsDead(false);
     setShowAlert(false);
 
-    // Инициализация Three.js
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
     scene.fog = new THREE.Fog(0x0a0a0a, 5, 25);
@@ -268,12 +250,6 @@ const Game = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
 
-    // ВАЖНО: раньше canvas добавлялся в document.body напрямую, вне React-дерева.
-    // .game-container использует position: fixed, что создаёт свой stacking
-    // context — а canvas, будучи добавлен в body ПОСЛЕ него, оказывался
-    // в отдельном контексте и перекрывал HUD/миникарту независимо от их
-    // z-index. Монтируем canvas внутрь containerRef, чтобы он был в той же
-    // стопке слоёв, что и HUD — тогда z-index в CSS работает как положено.
     if (containerRef.current) {
       containerRef.current.appendChild(renderer.domElement);
     }
@@ -282,7 +258,6 @@ const Game = () => {
     cameraRef.current = camera;
     rendererRef.current = renderer;
 
-    // Освещение
     const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
     scene.add(ambientLight);
 
